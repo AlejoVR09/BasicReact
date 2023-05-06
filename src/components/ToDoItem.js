@@ -1,5 +1,5 @@
 import React from "react";
-import './css/ToDoItem.css'
+import '../css/ToDoItem.css'
 
 function ToDoItem(props){
     

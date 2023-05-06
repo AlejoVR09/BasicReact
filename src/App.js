@@ -1,18 +1,38 @@
 import React from "react";
 
-import { ToDoCounter } from "./ToDoCounter";
-import { ToDoSearch } from "./ToDoSearch";
-import { ToDoList } from "./ToDoList";
-import { ToDoItem } from "./ToDoItem";
-import { CreateToDoButton } from "./CreateToDoButton";
+import { ToDoCounter } from "./components/ToDoCounter";
+import { ToDoSearch } from "./components/ToDoSearch";
+import { ToDoList } from "./components/ToDoList";
+import { ToDoItem } from "./components/ToDoItem";
+import { CreateToDoButton } from "./components/CreateToDoButton";
 
-const todosDefault=[
-  {text:'Cortar cebolla', completed:true},
-  {text:'Tormar el curso de intro a react', completed:true},
-  {text:'Llorar con la llorona', completed:false}
-];
+function useLocalStorage(itemName) {
+  const localStorageItem=localStorage.getItem(itemName)
+  let parsedItem;
+
+  if (!localStorageItem) {
+    localStorage.setItem(itemName,JSON.stringify([]))
+    parsedItem=[]
+  } else {
+    parsedItem=JSON.parse(localStorageItem)
+  }
+
+  const [item, saveItem]=React.useState(parsedItem)
+
+  const saveItems= (newItemList)=>{
+    localStorage.setItem(itemName,JSON.stringify(newItemList))
+    saveItem(newItemList)
+  }
+
+  return [
+    item,
+    saveItems,
+  ];
+}
+
 function App() {
-  let [todos, setToDos]=React.useState(todosDefault)
+
+  const [todos,saveToDos]=useLocalStorage('ToDos_V1')
   const [searchValue, setSearchValue]=React.useState('')
 
   const completedToDos = todos.filter(todo=>todo.completed===true).length
@@ -33,8 +53,13 @@ function App() {
   const completeToDo = (text) => {
     const toDoIndex= todos.findIndex(todo=>todo.text===text)
     const newToDos=[...todos]
-    newToDos[toDoIndex].completed=true
-    setToDos(newToDos)
+    if(newToDos[toDoIndex].completed===true){
+      newToDos[toDoIndex].completed=false
+    }
+    else{
+      newToDos[toDoIndex].completed=true
+    }
+    saveToDos(newToDos)  
   }
 
 
@@ -44,7 +69,7 @@ function App() {
     })
     const newToDos=[...todos]
     newToDos.splice(toDoIndex,1)
-    setToDos(newToDos)
+    saveToDos(newToDos)
   }
 
 
