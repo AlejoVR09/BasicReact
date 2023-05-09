@@ -5,82 +5,25 @@ import { ToDoSearch } from "./components/ToDoSearch";
 import { ToDoList } from "./components/ToDoList";
 import { ToDoItem } from "./components/ToDoItem";
 import { CreateToDoButton } from "./components/CreateToDoButton";
-
-function useLocalStorage(itemName) {
-  const localStorageItem=localStorage.getItem(itemName)
-  let parsedItem;
-
-  if (!localStorageItem) {
-    localStorage.setItem(itemName,JSON.stringify([]))
-    parsedItem=[]
-  } else {
-    parsedItem=JSON.parse(localStorageItem)
-  }
-
-  const [item, saveItem]=React.useState(parsedItem)
-
-  const saveItems= (newItemList)=>{
-    localStorage.setItem(itemName,JSON.stringify(newItemList))
-    saveItem(newItemList)
-  }
-
-  return [
-    item,
-    saveItems,
-  ];
-}
+import { ToDoContext } from "./todoContext/ToDoContext";
 
 function App() {
-
-  const [todos,saveToDos]=useLocalStorage('ToDos_V1')
-  const [searchValue, setSearchValue]=React.useState('')
-
-  const completedToDos = todos.filter(todo=>todo.completed===true).length
-  const totalToDos =todos.length
-  
-  let searchedToDos=[]
-  if (!searchedToDos>=1) {
-    searchedToDos=todos
-  }
-  else{
-    searchedToDos=todos.filter((todo)=>{
-      const toDoText=todo.text.toLowerCase();
-      const searchText=searchValue.toLowerCase();
-      return toDoText.includes(searchText)
-    })
-  }
-
-  const completeToDo = (text) => {
-    const toDoIndex= todos.findIndex(todo=>todo.text===text)
-    const newToDos=[...todos]
-    if(newToDos[toDoIndex].completed===true){
-      newToDos[toDoIndex].completed=false
-    }
-    else{
-      newToDos[toDoIndex].completed=true
-    }
-    saveToDos(newToDos)  
-  }
-
-
-  const deleteToDo = (text) => {
-    const toDoIndex= todos.findIndex ((todo)=>{
-      return todo.text===text
-    })
-    const newToDos=[...todos]
-    newToDos.splice(toDoIndex,1)
-    saveToDos(newToDos)
-  }
-
-
-
+  const {
+    error,
+    loading,
+    searchedToDos,
+    completeToDo,
+    deleteToDo,
+  } = React.useContext(ToDoContext)
   return (
     <React.Fragment>
-      <ToDoCounter totalToDos={totalToDos} completedToDos={completedToDos}/>
+      <ToDoCounter/>
 
-      <ToDoSearch searchValue={searchValue} setSearchValue={setSearchValue} />
-
+      <ToDoSearch />
       <ToDoList>
+        {error && 'Desespérate, hubo un error...'}
+        {loading && 'Estamos cargando, no desesperes...'}
+        {(!loading && !searchedToDos.length) && '¡Crea tu primer TODO!'}
         {searchedToDos.map(todo=>(
           <ToDoItem
           key={todo.text} 
@@ -93,8 +36,10 @@ function App() {
       </ToDoList>
 
       <CreateToDoButton/>
-
     </React.Fragment>
+  
+
+    
   );
 }
 

@@ -4,12 +4,13 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './css/index.css'
+import { ToDoProvider } from './todoContext/ToDoContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  <ToDoProvider>
     <App />
-  </React.StrictMode>
+  </ToDoProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function
