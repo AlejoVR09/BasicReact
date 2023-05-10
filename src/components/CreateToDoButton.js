@@ -1,9 +1,13 @@
 import React from "react";
 import '../css/CreateToDoButton.css';
 
-function CreateToDoButton(){
+function CreateToDoButton(props){
+    const makeAPortal= ()=> {
+        props.setModal(!props.modal)
+    }
+
     return(
-        <button className="CreateTodoButton">+</button>
+        <button onClick={makeAPortal} className="CreateTodoButton">+</button>
     );
 }
 

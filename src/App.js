@@ -6,6 +6,8 @@ import { ToDoList } from "./components/ToDoList";
 import { ToDoItem } from "./components/ToDoItem";
 import { CreateToDoButton } from "./components/CreateToDoButton";
 import { ToDoContext } from "./todoContext/ToDoContext";
+import { Modal } from "./components/Modal";
+import { ToDoForm } from "./components/ToDoForm";
 
 function App() {
   const {
@@ -14,6 +16,8 @@ function App() {
     searchedToDos,
     completeToDo,
     deleteToDo,
+    modal,
+    setModal,
   } = React.useContext(ToDoContext)
   return (
     <React.Fragment>
@@ -35,7 +39,16 @@ function App() {
         ))}
       </ToDoList>
 
-      <CreateToDoButton/>
+      {!!modal &&(
+        <Modal>
+          <ToDoForm></ToDoForm>
+        </Modal>  
+      )}
+
+      <CreateToDoButton
+        setModal={setModal}
+        modal={modal}
+      />
     </React.Fragment>
   
 
